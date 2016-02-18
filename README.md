@@ -23,6 +23,8 @@ Prior work [1, 2, 3] showed how the following components are often significant p
 My proposed solution will be :
 
 - An tool to instrument the APK file (Ex : Soot, Jimple).
+-
+![Alt text](step.png)
 
 Base on the paper, the proposed system of an indoor localization Android application will mostly depend on the WifiScanner API.
 As my exprience, user interfaces of a mobile app whose energy consumption is greater than optimal
