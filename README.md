@@ -2,6 +2,12 @@
 
 Ex2 :
 
+Base on the requirement , I will assume that the Android app will call WifiManager.startScan() periodically to scan wifi signal, which consume massive amount energy of the battery.
+-Use some APK Extractor to extract the APK from the Android app.
+-Now I have the APK file, I will use Soot and Jimple to instrument the APK file.
+-After finish instrumenting, another APK file is conducted, with 
+
+
 ```
 import java.util.ArrayList;
 import java.util.Iterator;
