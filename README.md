@@ -39,40 +39,13 @@ public class MyBodyTransformer extends BodyTransformer{
 			Iterator<Unit> i = body.getUnits().snapshotIterator();
 			while (i.hasNext()) {
 				Unit u = i.next();
-				
-				if(u.toString().contains("println")){
-					removeStatement(u, body);				
-					replaceStatementByLog(u, body);
-				}
-				eliminatePremiumRateSMS(u, body);
+
+				countNumberOfStartScanFromWifiManager(u, body);
 			}
 		}
 	}
-	
-	private void removeStatement(Unit u, Body body){
-			body.getUnits().remove(u);
-	}
-	
-	private void replaceStatementByLog(Unit u, Body body){
-		SootMethod sm = Scene.v().getMethod("<android.util.Log: int i(java.lang.String,java.lang.String)>");
-		
-		Value logType = StringConstant.v("INFO");
-		Value logMessage = StringConstant.v("replaced log information");
-		
-		StaticInvokeExpr invokeExpr = Jimple.v().newStaticInvokeExpr(sm.makeRef(), logType, logMessage);
-//		VirtualInvokeExpr virtualExpr = Jimple.v().newVirtualInvokeExpr(null, sm.makeRef(), logType, logMessage);
-		Unit generated = Jimple.v().newInvokeStmt(invokeExpr);
-//		Unit generated = Jimple.v().newInvokeStmt(virtualExpr);
-//		Unit g2 = (Jimple.v().newInvokeStmt
-//		        (Jimple.v().newVirtualInvokeExpr
-//		                (tmpRef, toCall.makeRef(), StringConstant.v("Hello world!"))));
-		
-		body.getUnits().insertAfter(generated, u);
-		
-		body.getUnits().remove(u);
-	}
-	
-	private void eliminatePremiumRateSMS(Unit u, Body body){		
+
+	private void countNumberOfStartScanFromWifiManager(Unit u, Body body){		
 		if(u instanceof InvokeStmt){
 			InvokeStmt invoke = (InvokeStmt)u;
 			
