@@ -8,7 +8,7 @@ Base on the requirement , I will assume that the Android app will call WifiManag
 
 -Now I have the APK file, I will use Soot and Jimple to instrument the APK file.
 
--After finish instrumenting, another APK file is conducted, with 
+-After finish instrumenting, a new APK file is conducted, with my new instrumenting code that have been injected into the APK via Soot and Jimple.
 
 
 ```
@@ -44,6 +44,8 @@ public class MyBodyTransformer extends BodyTransformer{
 
 	@Override
 	protected void internalTransform(Body body, String arg0, Map arg1) {
+	
+	        // Something like a Classloader , which will load all the classes of the APK.
 		if (body.getMethod().getDeclaringClass().getName().startsWith("de.ecspride")) {
 			Iterator<Unit> i = body.getUnits().snapshotIterator();
 			while (i.hasNext()) {
