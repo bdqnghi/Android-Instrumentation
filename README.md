@@ -18,7 +18,11 @@ Prior work [1, 2, 3] showed how the following components are often significant p
 
 • Network consumers emulate application network interaction by periodically trans- mitting and receiving data.
 
-• Screen drawing agents utilize graphics libraries, such as OpenGL, to emulate a graphics-intensive application,
+• Screen drawing agents utilize graphics libraries, such as OpenGL, to emulate a graphics-intensive application.
+
+My proposed solution will be :
+
+- An tool to instrument the APK file (Ex : Soot, Jimple).
 
 Base on the paper, the proposed system of an indoor localization Android application will mostly depend on the WifiScanner API.
 As my exprience, user interfaces of a mobile app whose energy consumption is greater than optimal
