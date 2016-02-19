@@ -8,7 +8,7 @@ First, I want to the challenges associated with task to analyze the power consum
 
 Prior work [1, 2, 3] showed how the following components are often significant power consumers in mobile applications:
 
-• CPU consumers are used to represent CPU-intensive code segments such as cal- culations on sensor data.
+• CPU consumers are used to represent CPU-intensive code segments such as calculations on sensor data.
 
 • Memory consumers generate dynamically allocated memory
 
@@ -22,8 +22,22 @@ Prior work [1, 2, 3] showed how the following components are often significant p
 
 My proposed solution will be :
 
-- An tool to instrument the APK file (Ex : Soot, Jimple).
--
+-We don't have the source code , but we can extract the APK file of any application from the Android phone 
+
+-After extracted the APK, write instrumentation code to inject into APK. There are some existed tools that have developed by different research teams around the world , like Soot , GreenAndroid , etc. We can inject some instrumented code like write the all of the method called into the log file , for example.
+
+-Write black box test cases to run test on the APK (Ex: Robotium framework).
+
+-The tests will be executed twice, the first time to get the trace (list of invoked methods) and the second to measure power consumption, so that the tracing overhead does not affect measuring. The results will be saved in files (one for each test), containing a list of the methods invoked, along with the number of times it was invoked, and also the execution time of the test and the energy consumed, in mW.
+
+-After all the tests executed (twice), the framework would have generated a set of files as big as the number of tests. For convenience, the tests will be merged in one file to be read, parsed and the information extracted once.
+
+–Classify the methods: At this point, the framework will get the values read from the file and classify them (and respective classes, packages and projects) according to the categories that described above.
+
+–Generate the results: Use charts to generate a graphical representation of the source code components, giving them different colors according to its green-aware classification.
+
+For a very generic case, an application will be implemented under the combination of different components, like Sensor, GPS , Network, etc. We can write the instrumentation code for all of these components to benchmark the app. 
+For example, we can write 
 ![Alt text](step.png)
 
 Base on the paper, the proposed system of an indoor localization Android application will mostly depend on the WifiScanner API.
