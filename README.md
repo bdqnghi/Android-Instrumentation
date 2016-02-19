@@ -1,10 +1,8 @@
 # SIS PhD Exercises.
 
-## Ex1:
+### Ex1:
 
-Solution 1:
-First, I want to the challenges associated with task to analyze the power consumption of mobile software:
-1) Predicting the power Consumption of Framework API Calls accurately: each line of code, which is executed when the app runs  will result in a specific amount of power consumed by the hard-ware
+
 
 Prior work [1, 2, 3] showed how the following components are often significant power consumers in mobile applications:
 
@@ -20,30 +18,32 @@ Prior work [1, 2, 3] showed how the following components are often significant p
 
 • Screen drawing agents utilize graphics libraries, such as OpenGL, to emulate a graphics-intensive application.
 
-My proposed solution will be :
+I will make an assumption that the above components are the part that consume significant power in mobile application. Thus I will focus to detect which of the above components will consume significant power in a mobile app.
 
--We don't have the source code , but we can extract the APK file of any application from the Android phone 
+In general, given an application, we don't know exactly which one of these components will consume signficant power. Since we don't have the source code , but we can extract the APK file of any application from the Android phone. The APK is just the compiled set of Java byte code , image resources, config resources. In this case, we should only care about the Java byte code. Since Java byte code is the instruction set of the Java virtual machine  , in Android , it's Dalvik virtual machine , we can use ClassLoader, which is provided by the Java Platform to decompile the Java byte code and, we can put our pre-defined variables, statements into the decompiled code unify it in a new Java object (Instrumentation code) and transforme our new source code to a new APK. There are some existed tools that have developed by different research teams around the world , like Soot , GreenAndroid , etc
 
--After extracted the APK, write instrumentation code to inject into APK. There are some existed tools that have developed by different research teams around the world , like Soot , GreenAndroid , etc. We can inject some instrumented code like write the all of the method called into the log file , for example.
+Based on those assumptions, my proposed solution will be :
 
--Write black box test cases to run test on the APK (Ex: Robotium framework).
+-After extracted the APK, write instrumentation code to inject into APK. We can inject some instrumented code like write all of the method called into the log file , for example.
 
--The tests will be executed twice, the first time to get the trace (list of invoked methods) and the second to measure power consumption, so that the tracing overhead does not affect measuring. The results will be saved in files (one for each test), containing a list of the methods invoked, along with the number of times it was invoked, and also the execution time of the test and the energy consumed, in mW.
+-Write test cases to run test on the APK (Ex: Robotium framework).
 
--After all the tests executed (twice), the framework would have generated a set of files as big as the number of tests. For convenience, the tests will be merged in one file to be read, parsed and the information extracted once.
+-The tests will be executed to get the trace (list of invoked methods). The results will be saved in files (one for each test), containing a list of the methods invoked, along with the number of times it was invoked, and also the execution time of the test.
+
+-After all the tests executed , the framework would have generated a set of files as big as the number of tests. For convenience, the tests will be merged in one file to be read, parsed and the information extracted once.
 
 –Classify the methods: At this point, the framework will get the values read from the file and classify them (and respective classes, packages and projects) according to the categories that described above.
 
 –Generate the results: Use charts to generate a graphical representation of the source code components, giving them different colors according to its green-aware classification.
 
 For a very generic case, an application will be implemented under the combination of different components, like Sensor, GPS , Network, etc. We can write the instrumentation code for all of these components to benchmark the app. 
-For example, we can write 
+
+For a specific case , like the indoor localization application in this exercise, the algorithms are based on collecting wifi signal and perform some calculation tasks. So the WifiManager components of Android should be the component we focus to write instrumentation code.
+
+### This is the overview diagram of my proposed solution:
 ![Alt text](step.png)
 
-Base on the paper, the proposed system of an indoor localization Android application will mostly depend on the WifiScanner API.
-As my exprience, user interfaces of a mobile app whose energy consumption is greater than optimal
-
-## Ex2 :
+### Ex2 :
 
 Base on the requirement , I will assume that the Android app will call WifiManager.startScan() periodically to scan wifi signal, which consume massive amount energy of the battery.
 
