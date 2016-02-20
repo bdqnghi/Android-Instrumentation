@@ -116,17 +116,16 @@ public class MyBodyTransformer extends BodyTransformer{
 		                                    new OutputStreamWriter(streamOut));
 		                                    
 			        // Generate new statement : System.out.println("WifiManager start scan) and inject into source code whenever WifiScanner.startscan() is called 
-			        
+		    
 				Local tmpRef = Jimple.v().newLocal("tmpRef", RefType.v("java.io.PrintStream"));
-                	        body.getLocals().add(tmpRef);
-                	        units.add(Jimple.v().newAssignStmt(tmpRef, Jimple.v().newStaticFieldRef(
-                                Scene.v().getField("<java.lang.System: java.io.PrintStream out>").makeRef())));
-                                SootMethod toCall = Scene.v().getMethod("<java.io.PrintStream: void println(java.lang.String)>");
-                                String time = getCurrentDateTime();
-                                
+				body.getLocals().add(tmpRef);
+				units.add(Jimple.v().newAssignStmt(tmpRef, Jimple.v().newStaticFieldRef(Scene.v().getField("<java.lang.System: java.io.PrintStream out>").makeRef())));
+				
+				SootMethod toCall = Scene.v().getMethod("<java.io.PrintStream: void println(java.lang.String)>");
+				String time = getCurrentDateTime();
                                 //Write log to file
                                 units.add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(tmpRef, toCall.makeRef(), StringConstant.v(time + "	" + WifiManager start scan!"))));
-                               
+                                
                                 writerOut.println(time + "	" + WifiManager start scan!")
                                 body.getUnits().insertBefore(units, u);
 			}
