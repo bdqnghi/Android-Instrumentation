@@ -151,6 +151,8 @@ Log file format will be :
 2016/02/18 10:00:45  WifiManager start scan
 
 
+## References
+
 1. C. Thompson, J. White, B. Dougherty, and D. Schmidt. Optimizing Mobile Application
 Performance with Model-Driven Engineering. In Proceedings of the 7th IFIP Workshop on
 Software Technologies for Future Embedded and Ubiquitous Systems, 2009.
