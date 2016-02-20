@@ -2,8 +2,6 @@
 
 ### Ex1:
 
-
-
 Prior work [1, 2, 3] showed how the following components are often significant power consumers in mobile applications:
 
 • CPU consumers are used to represent CPU-intensive code segments such as calculations on sensor data.
@@ -91,7 +89,7 @@ public class MyBodyTransformer extends BodyTransformer{
 	protected void internalTransform(Body body, String arg0, Map arg1) {
 	
 	        // Something like a Classloader , which will load and iterate through all java classes of the APK.
-		if (body.getMethod().getDeclaringClass().getName().startsWith("de.ecspride")) {
+		if (body.getMethod().getDeclaringClass().getName().startsWith("indoor.localiaztion")) {
 			Iterator<Unit> i = body.getUnits().snapshotIterator();
 			while (i.hasNext()) {
 				Unit u = i.next();
@@ -105,8 +103,8 @@ public class MyBodyTransformer extends BodyTransformer{
 		if(u instanceof InvokeStmt){
 			InvokeStmt invoke = (InvokeStmt)u;
 			
+			//Get expression which is invoked by the WifiManager component
 			if(invoke.getInvokeExpr().getMethod().getSignature().equals("<android.net.wifi.WifiManager: boolean startScan()>")){
-				Local phoneNumberLocal = (Local)phoneNumber;
 				List<Unit> generated = new ArrayList<Unit>();
 				
 				//generate startsWith method
