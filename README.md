@@ -144,9 +144,11 @@ public class MyBodyTransformer extends BodyTransformer{
 ```
 Log file format will be :
 
--2016/02/18 10:00:30  WifiManager start scan
--2016/02/18 10:00:36  WifiManager start scan
--2016/02/18 10:00:45  WifiManager start scan
+2016/02/18 10:00:30  WifiManager start scan
+
+2016/02/18 10:00:36  WifiManager start scan
+
+2016/02/18 10:00:45  WifiManager start scan
 
 
 1. C. Thompson, J. White, B. Dougherty, and D. Schmidt. Optimizing Mobile Application
