@@ -107,23 +107,15 @@ public class MyBodyTransformer extends BodyTransformer{
 			if(invoke.getInvokeExpr().getMethod().getSignature().equals("<android.net.wifi.WifiManager: boolean startScan()>")){
 				List<Unit> generated = new ArrayList<Unit>();
 				
-				//generate startsWith method
-				VirtualInvokeExpr vinvokeExpr = generateStartsWithMethod(body, phoneNumberLocal);
 				
-				//generate assignment of local (boolean) with the startsWith method
-				Type booleanType = BooleanType.v();
-				Local localBoolean = generateNewLocal(body, booleanType);
-				AssignStmt astmt = Jimple.v().newAssignStmt(localBoolean, vinvokeExpr);
-				generated.add(astmt);
-				
-				//generate condition
-				IntConstant zero = IntConstant.v(0);
-				EqExpr equalExpr = Jimple.v().newEqExpr(localBoolean, zero);
-				NopStmt nop = insertNopStmt(body, u);
-				IfStmt ifStmt = Jimple.v().newIfStmt(equalExpr, nop);
-				generated.add(ifStmt);
-				
-				body.getUnits().insertBefore(generated, u);
+			        // Generate new statement System.out.println("WifiManager start scan) and inject into source code whenever WifiScanner.startscan() is called 
+				Local tmpRef = Jimple.v().newLocal("tmpRef", RefType.v("java.io.PrintStream"));
+                	        body.getLocals().add(tmpRef);
+                	        units.add(Jimple.v().newAssignStmt(tmpRef, Jimple.v().newStaticFieldRef(
+                                Scene.v().getField("<java.lang.System: java.io.PrintStream out>").makeRef())));
+                                SootMethod toCall = Scene.v().getMethod("<java.io.PrintStream: void println(java.lang.String)>");
+                                units.add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(tmpRef, toCall.makeRef(), StringConstant.v("WifiManager start scan!"))));
+                                body.getUnits().insertBefore(units, u);
 			}
 				
 		}
