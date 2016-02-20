@@ -55,7 +55,7 @@ The steps will be :
 
 Pseudo-code to instrument the APK:
 
-```
+```java
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -123,11 +123,12 @@ public class MyBodyTransformer extends BodyTransformer{
 				
 				SootMethod toCall = Scene.v().getMethod("<java.io.PrintStream: void println(java.lang.String)>");
 				String time = getCurrentDateTime();
-                                //Write log to file
-                                units.add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(tmpRef, toCall.makeRef(), StringConstant.v(time + "	" + WifiManager start scan!"))));
-                                
-                                writerOut.println(time + "	" + WifiManager start scan!")
-                                body.getUnits().insertBefore(units, u);
+				
+				//Write log to file
+				units.add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(tmpRef, toCall.makeRef(), StringConstant.v(time + "	" + WifiManager start scan!"))));
+				writerOut.println(time + "	" + WifiManager start scan!");
+				body.getUnits().insertBefore(units, u);
+			
 			}
 				
 		}
