@@ -18,9 +18,9 @@ Prior work [1, 2, 3] showed how the following components are often significant p
 
 I will make an assumption that the above components are the part that consume significant power in mobile application. Thus I will focus to detect which of the above components will consume significant power in a mobile app.
 
-In general, given an application, we don't know exactly which one of these components will consume signficant power. Since we don't have the source code , but we can extract the APK file of any application from the Android phone. The APK is just the compiled set of Java byte code , image resources, config resources. In this case, we should only care about the Java byte code. Since Java byte code is the instruction set of the Java virtual machine  , in Android , it's Dalvik virtual machine , we can use ClassLoader, which is provided by the Java Platform to decompile the Java byte code and, we can put our pre-defined variables, statements into the decompiled code unify it in a new Java object (Instrumentation code) and transforme our new source code to a new APK. There are some existed tools that have developed by different research teams around the world , like Soot , GreenAndroid , etc
+In general, given an application, we don't know exactly which one of these components will consume signficant power. Since we don't have the source code , but we can extract the APK file of any application from the Android phone. The APK is just the compiled set of Java byte code , image resources, config resources. In this case, we should only care about the Java byte code. Since Java byte code is the instruction set of the Java virtual machine  , in Android , it's Dalvik virtual machine. In theory, we can use ClassLoader, which is provided by the Java Platform to decompile the Java byte code and, we can put our pre-defined variables, statements into the decompiled code and unify it in a new Java object (Instrumentation code) and transform our new source code to a new APK.Currently, there are some existed tools that can provide this functions , which are developed by different research teams around the world , like Soot , GreenAndroid , etc
 
-Based on those assumptions, my proposed solution will be :
+Based on the above assumptions, my proposed solution will be :
 
 -After extracted the APK, write instrumentation code to inject into APK. We can inject some instrumented code like write all of the method called into the log file , for example.
 
@@ -54,6 +54,7 @@ The steps will be :
 -After finish instrumenting, a new APK file is conducted, with my new instrumenting code that have been injected into the APK via Soot and Jimple.
 
 Pseudo-code to instrument the APK:
+
 ```
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -107,43 +108,45 @@ public class MyBodyTransformer extends BodyTransformer{
 			if(invoke.getInvokeExpr().getMethod().getSignature().equals("<android.net.wifi.WifiManager: boolean startScan()>")){
 				List<Unit> generated = new ArrayList<Unit>();
 				
-				
-			        // Generate new statement System.out.println("WifiManager start scan) and inject into source code whenever WifiScanner.startscan() is called 
+				//Prepare to write log to file
+				String fileName = SourceLocator.v().getFileNameFor("sdCard/log.file, Options.output_format_class);
+				OutputStream streamOut = new JasminOutputStream(
+		                                    new FileOutputStream(fileName));
+				PrintWriter writerOut = new PrintWriter(
+		                                    new OutputStreamWriter(streamOut));
+		                                    
+			        // Generate new statement : System.out.println("WifiManager start scan) and inject into source code whenever WifiScanner.startscan() is called 
+			        
 				Local tmpRef = Jimple.v().newLocal("tmpRef", RefType.v("java.io.PrintStream"));
                 	        body.getLocals().add(tmpRef);
                 	        units.add(Jimple.v().newAssignStmt(tmpRef, Jimple.v().newStaticFieldRef(
                                 Scene.v().getField("<java.lang.System: java.io.PrintStream out>").makeRef())));
                                 SootMethod toCall = Scene.v().getMethod("<java.io.PrintStream: void println(java.lang.String)>");
-                                units.add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(tmpRef, toCall.makeRef(), StringConstant.v("WifiManager start scan!"))));
+                                String time = getCurrentDateTime();
+                                
+                                //Write log to file
+                                units.add(Jimple.v().newInvokeStmt(Jimple.v().newVirtualInvokeExpr(tmpRef, toCall.makeRef(), StringConstant.v(time + "	" + WifiManager start scan!"))));
+                               
+                                writerOut.println(time + "	" + WifiManager start scan!")
                                 body.getUnits().insertBefore(units, u);
 			}
 				
 		}
 	}
 	
-	private VirtualInvokeExpr generateStartsWithMethod(Body body, Local phoneNumberLocal){
-		SootMethod sm = Scene.v().getMethod("<java.lang.String: boolean startsWith(java.lang.String)>");
-		
-		
-		Value value = StringConstant.v("0900");
-		VirtualInvokeExpr vinvokeExpr = Jimple.v().newVirtualInvokeExpr(phoneNumberLocal, sm.makeRef(), value);
-		return vinvokeExpr;
-	}
-	
-	private Local generateNewLocal(Body body, Type type){
-		LocalGenerator lg = new LocalGenerator(body);
-		return lg.generateLocal(type);
-	}	
-	
-	private NopStmt insertNopStmt(Body body, Unit u){
-		NopStmt nop = Jimple.v().newNopStmt();
-		body.getUnits().insertAfter(nop, u);
-		return nop;
+	private String getCurrentDateTime(){
+	   	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		Date date = new Date();
+	        return dateFormat.format(date)).toString();
 	}
 }
 
 ```
+Log file format will be :
 
+-2016/02/18 10:00:30  WifiManager start scan
+-2016/02/18 10:00:36  WifiManager start scan
+-2016/02/18 10:00:45  WifiManager start scan
 
 
 1. C. Thompson, J. White, B. Dougherty, and D. Schmidt. Optimizing Mobile Application
